@@ -1,0 +1,243 @@
+[
+    {
+      "Rok": 1992,
+      "Wyroby spirytusowe (100% alkoholu)": 3.5,
+      "Wino i miody pitne": 7.6,
+      "Wino i miody pitne w przeliczeniu na 100% alkohol": 0.91,
+      "Piwo": 38.6,
+      "Piwo w przeliczeniu na 100% alkoholu": 2.12
+    },
+    {
+      "Rok": 1993,
+      "Wyroby spirytusowe (100% alkoholu)": 3.8,
+      "Wino i miody pitne": 7.5,
+      "Wino i miody pitne w przeliczeniu na 100% alkohol": 0.9,
+      "Piwo": 33.0,
+      "Piwo w przeliczeniu na 100% alkoholu": 1.82
+    },
+    {
+      "Rok": 1994,
+      "Wyroby spirytusowe (100% alkoholu)": 3.8,
+      "Wino i miody pitne": 6.9,
+      "Wino i miody pitne w przeliczeniu na 100% alkohol": 0.83,
+      "Piwo": 36.4,
+      "Piwo w przeliczeniu na 100% alkoholu": 2.00
+    },
+    {
+      "Rok": 1995,
+      "Wyroby spirytusowe (100% alkoholu)": 3.5,
+      "Wino i miody pitne": 6.8,
+      "Wino i miody pitne w przeliczeniu na 100% alkohol": 0.82,
+      "Piwo": 39.0,
+      "Piwo w przeliczeniu na 100% alkoholu": 2.15
+    },
+    {
+      "Rok": 1996,
+      "Wyroby spirytusowe (100% alkoholu)": 2.9,
+      "Wino i miody pitne": 10.3,
+      "Wino i miody pitne w przeliczeniu na 100% alkohol": 1.24,
+      "Piwo": 42.8,
+      "Piwo w przeliczeniu na 100% alkoholu": 2.35
+    },
+    {
+      "Rok": 1997,
+      "Wyroby spirytusowe (100% alkoholu)": 2.8,
+      "Wino i miody pitne": 12.8,
+      "Wino i miody pitne w przeliczeniu na 100% alkohol": 1.54,
+      "Piwo": 49.8,
+      "Piwo w przeliczeniu na 100% alkoholu": 2.74
+    },
+    {
+      "Rok": 1998,
+      "Wyroby spirytusowe (100% alkoholu)": 2.4,
+      "Wino i miody pitne": 13.7,
+      "Wino i miody pitne w przeliczeniu na 100% alkohol": 1.64,
+      "Piwo": 54.1,
+      "Piwo w przeliczeniu na 100% alkoholu": 2.98
+    },
+    {
+      "Rok": 1999,
+      "Wyroby spirytusowe (100% alkoholu)": 2.1,
+      "Wino i miody pitne": 13.6,
+      "Wino i miody pitne w przeliczeniu na 100% alkohol": 1.63,
+      "Piwo": 60.1,
+      "Piwo w przeliczeniu na 100% alkoholu": 3.31
+    },
+    {
+      "Rok": 2000,
+      "Wyroby spirytusowe (100% alkoholu)": 2.0,
+      "Wino i miody pitne": 12.0,
+      "Wino i miody pitne w przeliczeniu na 100% alkohol": 1.44,
+      "Piwo": 66.9,
+      "Piwo w przeliczeniu na 100% alkoholu": 3.68
+    },
+    {
+      "Rok": 2001,
+      "Wyroby spirytusowe (100% alkoholu)": 1.7,
+      "Wino i miody pitne": 10.6,
+      "Wino i miody pitne w przeliczeniu na 100% alkohol": 1.27,
+      "Piwo": 66.5,
+      "Piwo w przeliczeniu na 100% alkoholu": 3.66
+    },
+    {
+      "Rok": 2002,
+      "Wyroby spirytusowe (100% alkoholu)": 1.7,
+      "Wino i miody pitne": 11.2,
+      "Wino i miody pitne w przeliczeniu na 100% alkohol": 1.34,
+      "Piwo": 70.7,
+      "Piwo w przeliczeniu na 100% alkoholu": 3.89
+    },
+    {
+      "Rok": 2003,
+      "Wyroby spirytusowe (100% alkoholu)": 2.4,
+      "Wino i miody pitne": 11.3,
+      "Wino i miody pitne w przeliczeniu na 100% alkohol": 1.36,
+      "Piwo": 74.8,
+      "Piwo w przeliczeniu na 100% alkoholu": 4.10
+    },
+    {
+      "Rok": 2004,
+      "Wyroby spirytusowe (100% alkoholu)": 2.5,
+      "Wino i miody pitne": 10.6,
+      "Wino i miody pitne w przeliczeniu na 100% alkohol": 1.27,
+      "Piwo": 82.0,
+      "Piwo w przeliczeniu na 100% alkoholu": 4.51
+    },
+    {
+      "Rok": 2005,
+      "Wyroby spirytusowe (100% alkoholu)": 2.5,
+      "Wino i miody pitne": 8.6,
+      "Wino i miody pitne w przeliczeniu na 100% alkohol": 1.03,
+      "Piwo": 80.7,
+      "Piwo w przeliczeniu na 100% alkoholu": 4.44
+    },
+    {
+      "Rok": 2006,
+      "Wyroby spirytusowe (100% alkoholu)": 2.7,
+      "Wino i miody pitne": 9.1,
+      "Wino i miody pitne w przeliczeniu na 100% alkohol": 1.09,
+      "Piwo": 90.8,
+      "Piwo w przeliczeniu na 100% alkoholu": 5.00
+    },
+    {
+      "Rok": 2007,
+      "Wyroby spirytusowe (100% alkoholu)": 3.0,
+      "Wino i miody pitne": 8.9,
+      "Wino i miody pitne w przeliczeniu na 100% alkohol": 1.07,
+      "Piwo": 93.4,
+      "Piwo w przeliczeniu na 100% alkoholu": 5.14
+    },
+    {
+      "Rok": 2008,
+      "Wyroby spirytusowe (100% alkoholu)": 3.4,
+      "Wino i miody pitne": 8.2,
+      "Wino i miody pitne w przeliczeniu na 100% alkohol": 0.98,
+      "Piwo": 94.4,
+      "Piwo w przeliczeniu na 100% alkoholu": 5.19
+    },
+    {
+      "Rok": 2009,
+      "Wyroby spirytusowe (100% alkoholu)": 3.2,
+      "Wino i miody pitne": 7.0,
+      "Wino i miody pitne w przeliczeniu na 100% alkohol": 0.84,
+      "Piwo": 91.2,
+      "Piwo w przeliczeniu na 100% alkoholu": 5.02
+    },
+    {
+      "Rok": 2010,
+      "Wyroby spirytusowe (100% alkoholu)": 3.2,
+      "Wino i miody pitne": 7.0,
+      "Wino i miody pitne w przeliczeniu na 100% alkohol": 0.84,
+      "Piwo": 90.5,
+      "Piwo w przeliczeniu na 100% alkoholu": 4.98
+    },
+    {
+      "Rok": 2011,
+      "Wyroby spirytusowe (100% alkoholu)": 3.3,
+      "Wino i miody pitne": 6.4,
+      "Wino i miody pitne w przeliczeniu na 100% alkohol": 0.77,
+      "Piwo": 94.3,
+      "Piwo w przeliczeniu na 100% alkoholu": 5.19
+    },
+    {
+      "Rok": 2012,
+      "Wyroby spirytusowe (100% alkoholu)": 3.0,
+      "Wino i miody pitne": 5.9,
+      "Wino i miody pitne w przeliczeniu na 100% alkohol": 0.71,
+      "Piwo": 99.2,
+      "Piwo w przeliczeniu na 100% alkoholu": 5.46
+    },
+    {
+      "Rok": 2013,
+      "Wyroby spirytusowe (100% alkoholu)": 3.6,
+      "Wino i miody pitne": 5.8,
+      "Wino i miody pitne w przeliczeniu na 100% alkohol": 0.67,
+      "Piwo": 97.7,
+      "Piwo w przeliczeniu na 100% alkoholu": 5.37
+    },
+    {
+      "Rok": 2014,
+      "Wyroby spirytusowe (100% alkoholu)": 3.2,
+      "Wino i miody pitne": 6.3,
+      "Wino i miody pitne w przeliczeniu na 100% alkohol": 0.76,
+      "Piwo": 98.9,
+      "Piwo w przeliczeniu na 100% alkoholu": 5.44
+    },
+    {
+      "Rok": 2015,
+      "Wyroby spirytusowe (100% alkoholu)": 3.2,
+      "Wino i miody pitne": 6.3,
+      "Wino i miody pitne w przeliczeniu na 100% alkohol": 0.76,
+      "Piwo": 99.1,
+      "Piwo w przeliczeniu na 100% alkoholu": 5.45
+    },
+    {
+      "Rok": 2016,
+      "Wyroby spirytusowe (100% alkoholu)": 3.2,
+      "Wino i miody pitne": 5.8,
+      "Wino i miody pitne w przeliczeniu na 100% alkohol": 0.70,
+      "Piwo": 99.5,
+      "Piwo w przeliczeniu na 100% alkoholu": 5.47
+    },
+    {
+      "Rok": 2017,
+      "Wyroby spirytusowe (100% alkoholu)": 3.3,
+      "Wino i miody pitne": 6.1,
+      "Wino i miody pitne w przeliczeniu na 100% alkohol": 0.73,
+      "Piwo": 98.5,
+      "Piwo w przeliczeniu na 100% alkoholu": 5.42
+    },
+    {
+      "Rok": 2018,
+      "Wyroby spirytusowe (100% alkoholu)": 3.3,
+      "Wino i miody pitne": 6.0,
+      "Wino i miody pitne w przeliczeniu na 100% alkohol": 0.72,
+      "Piwo": 100.5,
+      "Piwo w przeliczeniu na 100% alkoholu": 5.53
+    },
+    {
+      "Rok": 2019,
+      "Wyroby spirytusowe (100% alkoholu)": 3.7,
+      "Wino i miody pitne": 6.2,
+      "Wino i miody pitne w przeliczeniu na 100% alkohol": 0.74,
+      "Piwo": 97.1,
+      "Piwo w przeliczeniu na 100% alkoholu": 5.34
+    },
+    {
+      "Rok": 2020,
+      "Wyroby spirytusowe (100% alkoholu)": 3.7,
+      "Wino i miody pitne": 6.4,
+      "Wino i miody pitne w przeliczeniu na 100% alkohol": 0.77,
+      "Piwo": 93.6,
+      "Piwo w przeliczeniu na 100% alkoholu": 5.15
+    },
+    {
+      "Rok": 2021,
+      "Wyroby spirytusowe (100% alkoholu)": 3.8,
+      "Wino i miody pitne": 6.7,
+      "Wino i miody pitne w przeliczeniu na 100% alkohol": 0.80,
+      "Piwo": 92.7,
+      "Piwo w przeliczeniu na 100% alkoholu": 5.10
+    }
+  ]
+  
