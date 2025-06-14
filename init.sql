@@ -1,4 +1,3 @@
-
 -- Tworzenie bazy danych
 CREATE DATABASE IF NOT EXISTS integracja_systemow;
 USE integracja_systemow;
@@ -28,34 +27,32 @@ CREATE TABLE IF NOT EXISTS alcohol_consumption (
 CREATE TABLE IF NOT EXISTS disease_dictionary (
     disease_code VARCHAR(20) PRIMARY KEY,
     disease_name_pl VARCHAR(255) NOT NULL,
-    disease_name_en VARCHAR(255),
     category VARCHAR(100),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Wypełnienie słownika chorób
-INSERT INTO disease_dictionary (disease_code, disease_name_pl, disease_name_en, category) VALUES
-('E24.4', 'Zespół pseudo-Cushinga u alkoholików', 'Alcohol-induced pseudo-Cushing syndrome', 'Choroby endokrynologiczne'),
-('F10', 'Zaburzenia psychiczne i zaburzenia zachowania spowodowane użyciem alkoholu', 'Mental and behavioural disorders due to use of alcohol', 'Zaburzenia psychiczne'),
-('G31.2', 'Zwyrodnienie układu nerwowego wywołane przez alkohol', 'Degeneration of nervous system due to alcohol', 'Choroby układu nerwowego'),
-('G62.1', 'Polineuropatia alkoholowa', 'Alcoholic polyneuropathy', 'Choroby układu nerwowego'),
-('G72.1', 'Miopatia alkoholowa', 'Alcoholic myopathy', 'Choroby układu nerwowego'),
-('I42.6', 'Kardiomiopatia alkoholowa', 'Alcoholic cardiomyopathy', 'Choroby układu krążenia'),
-('K29.2', 'Alkoholowe zapalenie żołądka', 'Alcoholic gastritis', 'Choroby układu pokarmowego'),
-('K70', 'Alkoholowa choroba wątroby', 'Alcoholic liver disease', 'Choroby układu pokarmowego'),
-('K73', 'Przewlekłe zapalenie wątroby niesklasyfikowane gdzie indziej', 'Chronic hepatitis, not elsewhere classified', 'Choroby układu pokarmowego'),
-('K74.0', 'Zwłóknienie wątroby', 'Hepatic fibrosis', 'Choroby układu pokarmowego'),
-('K74.1', 'Stwardnienie wątroby', 'Hepatic sclerosis', 'Choroby układu pokarmowego'),
-('K74.2', 'Zwłóknienie wątroby ze stwardnieniem wątroby', 'Hepatic fibrosis with hepatic sclerosis', 'Choroby układu pokarmowego'),
-('K74.6', 'Inna i nieokreślona marskość wątroby', 'Other and unspecified cirrhosis of liver', 'Choroby układu pokarmowego'),
-('K85.2', 'Alkoholowe ostre zapalenie trzustki', 'Alcohol-induced acute pancreatitis', 'Choroby układu pokarmowego'),
-('K86.0', 'Alkoholowe przewlekłe zapalenie trzustki', 'Alcohol-induced chronic pancreatitis', 'Choroby układu pokarmowego'),
-('Q86.0', 'Płodowy zespół alkoholowy (dysmorficzny)', 'Fetal alcohol syndrome (dysmorphic)', 'Wady wrodzone'),
-('R78.0', 'Stwierdzenie obecności alkoholu we krwi', 'Finding of alcohol in blood', 'Objawy i nieprawidłowe wyniki badań')
+INSERT INTO disease_dictionary (disease_code, disease_name_pl, category) VALUES
+('E24.4', 'Zespół pseudo-Cushinga u alkoholików', 'Choroby endokrynologiczne'),
+('F10', 'Zaburzenia psychiczne i zaburzenia zachowania spowodowane użyciem alkoholu', 'Zaburzenia psychiczne'),
+('G31.2', 'Zwyrodnienie układu nerwowego wywołane przez alkohol', 'Choroby układu nerwowego'),
+('G62.1', 'Polineuropatia alkoholowa', 'Choroby układu nerwowego'),
+('G72.1', 'Miopatia alkoholowa', 'Choroby układu nerwowego'),
+('I42.6', 'Kardiomiopatia alkoholowa', 'Choroby układu krążenia'),
+('K29.2', 'Alkoholowe zapalenie żołądka', 'Choroby układu pokarmowego'),
+('K70', 'Alkoholowa choroba wątroby', 'Choroby układu pokarmowego'),
+('K73', 'Przewlekłe zapalenie wątroby niesklasyfikowane gdzie indziej', 'Choroby układu pokarmowego'),
+('K74.0', 'Zwłóknienie wątroby', 'Choroby układu pokarmowego'),
+('K74.1', 'Stwardnienie wątroby', 'Choroby układu pokarmowego'),
+('K74.2', 'Zwłóknienie wątroby ze stwardnieniem wątroby', 'Choroby układu pokarmowego'),
+('K74.6', 'Inna i nieokreślona marskość wątroby', 'Choroby układu pokarmowego'),
+('K85.2', 'Alkoholowe ostre zapalenie trzustki', 'Choroby układu pokarmowego'),
+('K86.0', 'Alkoholowe przewlekłe zapalenie trzustki', 'Choroby układu pokarmowego'),
+('Q86.0', 'Płodowy zespół alkoholowy (dysmorficzny)', 'Wady wrodzone'),
+('R78.0', 'Stwierdzenie obecności alkoholu we krwi', 'Objawy i nieprawidłowe wyniki badań')
 AS new_values
 ON DUPLICATE KEY UPDATE 
     disease_name_pl = new_values.disease_name_pl,
-    disease_name_en = new_values.disease_name_en,
     category = new_values.category;
 
 -- Tabela danych o chorobach
@@ -94,7 +91,6 @@ SELECT
     d.id,
     d.disease_code,
     dd.disease_name_pl,
-    dd.disease_name_en,
     dd.category,
     d.province,
     d.year,

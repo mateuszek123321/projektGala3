@@ -4,6 +4,7 @@ session_start();
 // Włączenie wymaganych plików
 require_once '../config/database.php';
 require_once '../models/AlcoholConsumption.php';
+require_once '../models/DiseaseDictionary.php';
 require_once '../models/Disease.php';
 require_once '../models/DataLog.php';
 
@@ -170,7 +171,7 @@ function importDiseaseData($data) {
         }
         
         // Mapowanie polskich nazw chorób na kody ICD-10
-        $diseaseMapping = [
+        $JsonDiseaseMapping = [
             'Zespół pseudo-cushinga u alkoholików' => ['code' => 'E24.4', 'name' => 'Zespół pseudo-Cushinga u alkoholików'],
             'Zaburzenia psychiczne i zachowania spowodowane użyciem alkoholu' => ['code' => 'F10', 'name' => 'Zaburzenia psychiczne i zaburzenia zachowania spowodowane użyciem alkoholu'],
             'Zwyrodnienie układu nerwowego wywołane przez alkohol' => ['code' => 'G31.2', 'name' => 'Zwyrodnienie układu nerwowego wywołane przez alkohol'],
@@ -179,14 +180,14 @@ function importDiseaseData($data) {
             'Kardiomiopatia alkoholowa' => ['code' => 'I42.6', 'name' => 'Kardiomiopatia alkoholowa'],
             'Alkoholowe zapalenie żołądka' => ['code' => 'K29.2', 'name' => 'Alkoholowe zapalenie żołądka'],
             'Alkoholowa choroba wątroby' => ['code' => 'K70', 'name' => 'Alkoholowa choroba wątroby'],
-            'Alkoholowe uszkodzenie wątroby niesklasyfikowane gdzie indziej' => ['code' => 'K73', 'name' => 'Przewlekłe zapalenie wątroby niesklasyfikowane gdzie indziej'],
+            'Przewlekłe zapalenie wątroby niesklasyfikowane gdzie indziej' => ['code' => 'K73', 'name' => 'Przewlekłe zapalenie wątroby niesklasyfikowane gdzie indziej'],
             'Zwłóknienie wątroby' => ['code' => 'K74.0', 'name' => 'Zwłóknienie wątroby'],
             'Stwardnienie wątroby' => ['code' => 'K74.1', 'name' => 'Stwardnienie wątroby'],
             'Zwłóknienie wątroby ze stwardnieniem wątroby' => ['code' => 'K74.2', 'name' => 'Zwłóknienie wątroby ze stwardnieniem wątroby'],
             'Inna i nieokreślona marskość wątroby' => ['code' => 'K74.6', 'name' => 'Inna i nieokreślona marskość wątroby'],
             'Alkoholowe ostre zapalenie trzustki' => ['code' => 'K85.2', 'name' => 'Alkoholowe ostre zapalenie trzustki'],
             'Przewlekłe zapalenie trzustki wywołane alkoholem' => ['code' => 'K86.0', 'name' => 'Alkoholowe przewlekłe zapalenie trzustki'],
-            'Płodowy zespół alkoholowy (dysmoriczny)' => ['code' => 'Q86.0', 'name' => 'Płodowy zespół alkoholowy (dysmorficzny)'],
+            'Płodowy zespół alkoholowy (dysmorficzny)' => ['code' => 'Q86.0', 'name' => 'Płodowy zespół alkoholowy (dysmorficzny)'],
             'Stwierdzenie obecności alkoholu we krwi' => ['code' => 'R78.0', 'name' => 'Stwierdzenie obecności alkoholu we krwi']
         ];
         
@@ -205,11 +206,16 @@ function importDiseaseData($data) {
                 }
                 
                 // Sprawdź czy mamy mapowanie dla tej choroby
-                if (!isset($diseaseMapping[$diseaseName])) {
+                if (!isset($JsonDiseaseMapping[$diseaseName])) {
+                    error_log(">> rok $year — choroba: “{$diseaseName}” — wartość: “{$value}”");
+                    if ($diseaseName === 'Rok') continue;
+                    if (!isset($JsonDiseaseMapping[$diseaseName])) {
+                        error_log("   >> brak mapowania dla: “{$diseaseName}”");
                     continue;
+                    }
                 }
                 
-                $diseaseInfo = $diseaseMapping[$diseaseName];
+                $diseaseInfo = $JsonDiseaseMapping[$diseaseName];
                 
                 // Obsłuż wartości typu "<5"
                 if (is_string($value) && $value === '<5') {

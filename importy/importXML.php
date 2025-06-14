@@ -157,7 +157,7 @@ function importDiseaseDataXML($xml) {
         $pdo->beginTransaction();
         
         // Mapowanie nazw XML na kody ICD-10
-        $xmlToDiseaseMapping = [
+        $XmlDiseaseMapping = [
             'zespol_pseudo_cushinga_u_alkoholikow' => ['code' => 'E24.4', 'name' => 'Zespół pseudo-Cushinga u alkoholików'],
             'zaburzenia_psychiczne_i_zachowania_spowodowane_uzyciem_alkoholu' => ['code' => 'F10', 'name' => 'Zaburzenia psychiczne i zaburzenia zachowania spowodowane użyciem alkoholu'],
             'zwyrodnienie_ukladu_nerwowego_wywolane_przez_alkohol' => ['code' => 'G31.2', 'name' => 'Zwyrodnienie układu nerwowego wywołane przez alkohol'],
@@ -166,14 +166,14 @@ function importDiseaseDataXML($xml) {
             'kardiomiopatia_alkoholowa' => ['code' => 'I42.6', 'name' => 'Kardiomiopatia alkoholowa'],
             'alkoholowe_zapalenie_zoladka' => ['code' => 'K29.2', 'name' => 'Alkoholowe zapalenie żołądka'],
             'alkoholowa_choroba_watroby' => ['code' => 'K70', 'name' => 'Alkoholowa choroba wątroby'],
-            'alkoholowe_uszkodzenie_watroby_niesklasyfikowane_gdzie_indziej' => ['code' => 'K73', 'name' => 'Przewlekłe zapalenie wątroby niesklasyfikowane gdzie indziej'],
+            'przewlekle_zapalenie_watroby_niesklasyfikowane_gdzie_indziej' => ['code' => 'K73', 'name' => 'Przewlekłe zapalenie wątroby niesklasyfikowane gdzie indziej'],
             'zwloknienie_watroby' => ['code' => 'K74.0', 'name' => 'Zwłóknienie wątroby'],
             'stwardnienie_watroby' => ['code' => 'K74.1', 'name' => 'Stwardnienie wątroby'],
             'zwloknienie_watroby_ze_stwardnieniem_watroby' => ['code' => 'K74.2', 'name' => 'Zwłóknienie wątroby ze stwardnieniem wątroby'],
             'inna_i_nieokreslona_marskosc_watroby' => ['code' => 'K74.6', 'name' => 'Inna i nieokreślona marskość wątroby'],
             'alkoholowe_ostre_zapalenie_trzustki' => ['code' => 'K85.2', 'name' => 'Alkoholowe ostre zapalenie trzustki'],
             'przewlekle_zapalenie_trzustki_wywolane_alkoholem' => ['code' => 'K86.0', 'name' => 'Alkoholowe przewlekłe zapalenie trzustki'],
-            'plodowy_zespol_alkoholowy_dysmoryczny' => ['code' => 'Q86.0', 'name' => 'Płodowy zespół alkoholowy (dysmorficzny)'],
+            'plodowy_zespol_alkoholowy_dysmorficzny' => ['code' => 'Q86.0', 'name' => 'Płodowy zespół alkoholowy (dysmorficzny)'],
             'stwierdzenie_obecnosci_alkoholu_we_krwi' => ['code' => 'R78.0', 'name' => 'Stwierdzenie obecności alkoholu we krwi']
         ];
         
@@ -188,11 +188,11 @@ function importDiseaseDataXML($xml) {
             // Przetwarzanie każdej choroby w danym roku
             foreach ($rok->children() as $diseaseName => $value) {
                 // Sprawdź czy mamy mapowanie dla tej choroby
-                if (!isset($xmlToDiseaseMapping[$diseaseName])) {
+                if (!isset($XmlDiseaseMapping[$diseaseName])) {
                     continue;
                 }
                 
-                $diseaseInfo = $xmlToDiseaseMapping[$diseaseName];
+                $diseaseInfo = $XmlDiseaseMapping[$diseaseName];
                 
                 // Obsłuż wartości typu "<5"
                 $textValue = (string)$value;

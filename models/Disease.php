@@ -3,7 +3,8 @@ require_once __DIR__ . '/BaseModel.php';
 
 class Disease extends BaseModel {
     protected static $table = 'diseases';
-    
+    protected static $primaryKey = 'id';
+
     // Znajdź choroby według roku
     public static function findByYear($year) {
         return static::where('year', '=', $year);

@@ -21,7 +21,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['export'])) {
     $exportType = $_POST['export_type'] ?? '';
     $yearFrom = $_POST['year_from'] ?? date('Y') - 10;
     $yearTo = $_POST['year_to'] ?? date('Y');
-    $format = $_POST['format'] ?? 'polish'; // polish lub english
     
     if (!in_array($exportType, ['alcohol', 'diseases', 'both'])) {
         $message = 'Nieprawidłowy typ eksportu.';
@@ -297,20 +296,6 @@ $diseaseStats = Disease::count();
                                value="<?php echo date('Y'); ?>" 
                                min="1990" max="<?php echo date('Y'); ?>">
                     </div>
-                    
-                    <div class="form-group">
-                        <label>Format nazw pól:</label>
-                        <div class="radio-group">
-                            <label>
-                                <input type="radio" name="format" value="polish" checked>
-                                Polski
-                            </label>
-                            <label>
-                                <input type="radio" name="format" value="english">
-                                Angielski
-                            </label>
-                        </div>
-                    </div>
                 </div>
                 
                 <button type="submit" name="export" class="btn">
@@ -325,7 +310,6 @@ $diseaseStats = Disease::count();
         <!-- Przykład formatu -->
         <div class="card">
             <h3>Przykład wygenerowanego pliku JSON</h3>
-            <p>Format polski:</p>
             <div class="code-block">{
     "spozycie_alkoholu": [
         {
@@ -341,7 +325,7 @@ $diseaseStats = Disease::count();
         {
             "Rok": 2023,
             "Zespół pseudo-cushinga u alkoholików": "&lt;5",
-            "Zaburzenia psychiczne i zachowania spowodowane użyciem alkoholu": 2081,
+            "Zaburzenia psychiczne i zaburzenia zachowania spowodowane użyciem alkoholu": 2081,
             "Zwyrodnienie układu nerwowego wywołane przez alkohol": 733,
             "Polineuropatia alkoholowa": 1108,
             "Kardiomiopatia alkoholowa": 72,
