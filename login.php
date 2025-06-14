@@ -1,6 +1,6 @@
-
 <?php
-require_once 'config/database.php';
+session_start(); // Sesja musi być rozpoczęta jako pierwsza rzecz!
+require_once 'models/User.php';
 
 $error = '';
 
@@ -12,20 +12,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $error = 'Proszę wypełnić wszystkie pola.';
     } else {
         try {
-            $pdo = getDBConnection();
-            $stmt = $pdo->prepare("SELECT id, username, password FROM users WHERE username = ? OR email = ?");
-            $stmt->execute([$username, $username]);
-            $user = $stmt->fetch();
+            // Używamy ORM do znalezienia użytkownika
+            $user = User::findByUsername($username);
             
-            if ($user && verifyPassword($password, $user['password'])) {
-                $_SESSION['user_id'] = $user['id'];
-                $_SESSION['username'] = $user['username'];
+            if ($user && $user->verifyPassword($password)) {
+                $_SESSION['user_id'] = $user->id;
+                $_SESSION['username'] = $user->username;
                 header('Location: index.php');
                 exit;
             } else {
                 $error = 'Nieprawidłowa nazwa użytkownika lub hasło.';
             }
-        } catch (PDOException $e) {
+        } catch (Exception $e) {
             $error = 'Wystąpił błąd podczas logowania.';
         }
     }

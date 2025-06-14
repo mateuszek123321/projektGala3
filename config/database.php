@@ -1,9 +1,12 @@
 <?php
 // Konfiguracja bazy danych
-define('DB_HOST', 'localhost');
+// Dla Dockera użyj 'db' jako host, dla XAMPP użyj 'localhost'
+$isDocker = getenv('DOCKER_ENV') !== false || file_exists('/.dockerenv');
+
+define('DB_HOST', $isDocker ? 'db' : 'localhost');
 define('DB_NAME', 'integracja_systemow');
-define('DB_USER', 'root');
-define('DB_PASS', '');
+define('DB_USER', $isDocker ? 'user' : 'root');
+define('DB_PASS', $isDocker ? 'password' : '');
 define('DB_CHARSET', 'utf8mb4');
 
 // Funkcja do nawiązania połączenia z bazą danych
@@ -31,6 +34,14 @@ function verifyPassword($password, $hash) {
 
 // Rozpoczęcie sesji jeśli nie została rozpoczęta
 if (session_status() === PHP_SESSION_NONE) {
-    session_start();
+    @session_start(); // @ tłumi warning jeśli sesja już była rozpoczęta gdzie indziej
 }
+
+// Automatyczne ładowanie klas modeli
+spl_autoload_register(function ($class) {
+    $modelPath = __DIR__ . '/../models/' . $class . '.php';
+    if (file_exists($modelPath)) {
+        require_once $modelPath;
+    }
+});
 ?>
