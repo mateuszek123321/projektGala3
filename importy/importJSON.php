@@ -231,9 +231,6 @@ function importDiseaseData($data) {
                     'province' => 'Polska',
                     'year' => $year,
                     'outpatient_count' => $outpatientCount,
-                    'hospital_count' => 0,
-                    'emergency_count' => 0,
-                    'admission_count' => 0
                 ]);
                 $disease->save();
                 $count++;
@@ -391,7 +388,7 @@ function importDiseaseData($data) {
 </head>
 <body>
     <div class="header">
-        <h1>Import danych JSON</h1>
+        <h2>Import danych JSON</h2>
         <a href="../index.php" style="color: white; text-decoration: none;">← Powrót do panelu</a>
     </div>
     
@@ -432,65 +429,6 @@ function importDiseaseData($data) {
                 <button type="submit" name="submit" class="btn">Importuj dane</button>
                 <a href="../index.php" class="btn btn-secondary" style="text-decoration: none;">Anuluj</a>
             </form>
-        </div>
-        
-        <div class="sample-format">
-            <h3>Przykładowy format plików JSON:</h3>
-            
-            <h4>Dane o spożyciu alkoholu:</h4>
-            <div class="code-block">[
-    {
-        "Rok": 2023,
-        "Wyroby spirytusowe (100% alkoholu)": 3.5,
-        "Wino i miody pitne": 7.6,
-        "Wino i miody pitne w przeliczeniu na 100% alkohol": 0.91,
-        "Piwo": 38.6,
-        "Piwo w przeliczeniu na 100% alkoholu": 2.12
-    }
-]
-// LUB format angielski:
-[
-    {
-        "year": 2023,
-        "spirits_100_alcohol": 3.5,
-        "wine_mead": 7.6,
-        "wine_mead_100_alcohol": 0.91,
-        "beer": 38.6,
-        "beer_100_alcohol": 2.12
-    }
-]</div>
-            
-            <h4 style="margin-top: 1rem;">Dane o chorobach:</h4>
-            <div class="code-block">[
-    {
-        "Rok": 2023,
-        "Zespół pseudo-cushinga u alkoholików": "&lt;5",
-        "Zaburzenia psychiczne i zachowania spowodowane użyciem alkoholu": 2081,
-        "Zwyrodnienie układu nerwowego wywołane przez alkohol": 733,
-        "Polineuropatia alkoholowa": 1108,
-        "Miopatia alkoholowa": 5,
-        "Kardiomiopatia alkoholowa": 72,
-        "Alkoholowe zapalenie żołądka": 105,
-        "Alkoholowa choroba wątroby": 10769,
-        "Zwłóknienie wątroby": 1495,
-        "Stwardnienie wątroby": 50,
-        "Inna i nieokreślona marskość wątroby": 5832
-    }
-]
-
-// LUB format angielski (każda choroba osobno):
-[
-    {
-        "disease_code": "F10",
-        "disease_name": "Zaburzenia psychiczne spowodowane alkoholem",
-        "province": "Polska",
-        "year": 2023,
-        "outpatient_count": 2081,
-        "hospital_count": 800,
-        "emergency_count": 450,
-        "admission_count": 300
-    }
-]</div>
         </div>
     </div>
 </body>

@@ -34,121 +34,63 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['export'])) {
             if ($exportType === 'alcohol' || $exportType === 'both') {
                 $alcoholData = AlcoholConsumption::getByYearRange($yearFrom, $yearTo);
                 
-                if ($format === 'polish') {
-                    // Format z polskimi nazwami
-                    $alcoholArray = [];
-                    foreach ($alcoholData as $record) {
-                        $alcoholArray[] = [
-                            'Rok' => $record->year,
-                            'Wyroby spirytusowe (100% alkoholu)' => (float)$record->spirits_100_alcohol,
-                            'Wino i miody pitne' => (float)$record->wine_mead,
-                            'Wino i miody pitne w przeliczeniu na 100% alkohol' => (float)$record->wine_mead_100_alcohol,
-                            'Piwo' => (float)$record->beer,
-                            'Piwo w przeliczeniu na 100% alkoholu' => (float)$record->beer_100_alcohol
-                        ];
-                    }
-                    $data['spozycie_alkoholu'] = $alcoholArray;
-                } else {
-                    // Format z angielskimi nazwami
-                    $alcoholArray = [];
-                    foreach ($alcoholData as $record) {
-                        $alcoholArray[] = $record->toArray();
-                    }
-                    $data['alcohol_consumption'] = $alcoholArray;
+                // Format standardowy z angielskimi nazwami
+                $alcoholArray = [];
+                foreach ($alcoholData as $record) {
+                    $alcoholArray[] = [
+                        'id' => (int)$record->id,
+                        'year' => (int)$record->year,
+                        'spirits_100_alcohol' => (float)$record->spirits_100_alcohol,
+                        'wine_mead' => (float)$record->wine_mead,
+                        'wine_mead_100_alcohol' => (float)$record->wine_mead_100_alcohol,
+                        'beer' => (float)$record->beer,
+                        'beer_100_alcohol' => (float)$record->beer_100_alcohol
+                    ];
                 }
+                $data['alcohol_consumption'] = $alcoholArray;
             }
             
             if ($exportType === 'diseases' || $exportType === 'both') {
-                // Mapowanie kodów chorób na polskie nazwy
-                $polishDiseaseNames = [
-                    'E24.4' => 'Zespół pseudo-cushinga u alkoholików',
-                    'F10' => 'Zaburzenia psychiczne i zachowania spowodowane użyciem alkoholu',
-                    'G31.2' => 'Zwyrodnienie układu nerwowego wywołane przez alkohol',
-                    'G62.1' => 'Polineuropatia alkoholowa',
-                    'G72.1' => 'Miopatia alkoholowa',
-                    'I42.6' => 'Kardiomiopatia alkoholowa',
-                    'K29.2' => 'Alkoholowe zapalenie żołądka',
-                    'K70' => 'Alkoholowa choroba wątroby',
-                    'K73' => 'Alkoholowe uszkodzenie wątroby niesklasyfikowane gdzie indziej',
-                    'K74.0' => 'Zwłóknienie wątroby',
-                    'K74.1' => 'Stwardnienie wątroby',
-                    'K74.2' => 'Zwłóknienie wątroby ze stwardnieniem wątroby',
-                    'K74.6' => 'Inna i nieokreślona marskość wątroby',
-                    'K85.2' => 'Alkoholowe ostre zapalenie trzustki',
-                    'K86.0' => 'Przewlekłe zapalenie trzustki wywołane alkoholem',
-                    'Q86.0' => 'Płodowy zespół alkoholowy (dysmoriczny)',
-                    'R78.0' => 'Stwierdzenie obecności alkoholu we krwi'
-                ];
-                
                 // Pobierz wszystkie choroby w zakresie lat
                 $diseaseData = Disease::raw(
                     "SELECT * FROM diseases WHERE year BETWEEN ? AND ? ORDER BY year, disease_code",
                     [$yearFrom, $yearTo]
                 )->fetchAll(PDO::FETCH_ASSOC);
                 
-                if ($format === 'polish') {
-                    // Format z polskimi nazwami - zgrupowane po latach
-                    $diseasesByYear = [];
-                    
-                    foreach ($diseaseData as $record) {
-                        $year = $record['year'];
-                        if (!isset($diseasesByYear[$year])) {
-                            $diseasesByYear[$year] = ['Rok' => (int)$year];
-                        }
-                        
-                        // Znajdź polską nazwę choroby
-                        $polishName = $polishDiseaseNames[$record['disease_code']] ?? $record['disease_name'];
-                        
-                        // Konwersja wartości - jeśli mniejsze niż 5, zapisz jako "<5"
-                        $value = (int)$record['outpatient_count'];
-                        if ($value > 0 && $value < 5) {
-                            $diseasesByYear[$year][$polishName] = '<5';
-                        } else {
-                            $diseasesByYear[$year][$polishName] = $value;
-                        }
-                    }
-                    
-                    $data['choroby'] = array_values($diseasesByYear);
-                } else {
-                    // Format z angielskimi nazwami - każdy rekord osobno
-                    $diseaseArray = [];
-                    foreach ($diseaseData as $record) {
-                        $diseaseArray[] = [
-                            'disease_code' => $record['disease_code'],
-                            'disease_name' => $record['disease_name'],
-                            'province' => $record['province'],
-                            'year' => (int)$record['year'],
-                            'outpatient_count' => (int)$record['outpatient_count'],
-                            'hospital_count' => (int)$record['hospital_count'],
-                            'emergency_count' => (int)$record['emergency_count'],
-                            'admission_count' => (int)$record['admission_count']
-                        ];
-                    }
-                    $data['diseases'] = $diseaseArray;
+                // Format standardowy - każdy rekord osobno
+                $diseaseArray = [];
+                foreach ($diseaseData as $record) {
+                    $diseaseArray[] = [
+                        'id' => (int)$record['id'],
+                        'disease_code' => $record['disease_code'],
+                        'disease_name' => $record['disease_name'],
+                        'province' => $record['province'],
+                        'year' => (int)$record['year'],
+                        'outpatient_count' => (int)$record['outpatient_count']
+                    ];
                 }
+                $data['diseases'] = $diseaseArray;
             }
             
             // Generowanie nazwy pliku
             if ($exportType === 'both') {
-                $filename = 'dane_kompletne_' . $yearFrom . '_' . $yearTo . '.json';
+                $filename = 'complete_data_' . $yearFrom . '_' . $yearTo . '.json';
             } elseif ($exportType === 'alcohol') {
-                $filename = 'alkohol_' . $yearFrom . '_' . $yearTo . '.json';
+                $filename = 'alcohol_consumption_' . $yearFrom . '_' . $yearTo . '.json';
             } else {
-                $filename = 'choroby_' . $yearFrom . '_' . $yearTo . '.json';
+                $filename = 'diseases_' . $yearFrom . '_' . $yearTo . '.json';
             }
             
             // Konwersja do JSON
             $jsonContent = json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
             
             if ($jsonContent === false) {
-                throw new Exception('Błąd podczas generowania JSON');
+                throw new Exception('Błąd podczas generowania JSON: ' . json_last_error_msg());
             }
             
             // Logowanie operacji
             $recordCount = 0;
-            if (isset($data['spozycie_alkoholu'])) $recordCount += count($data['spozycie_alkoholu']);
             if (isset($data['alcohol_consumption'])) $recordCount += count($data['alcohol_consumption']);
-            if (isset($data['choroby'])) $recordCount += count($data['choroby']);
             if (isset($data['diseases'])) $recordCount += count($data['diseases']);
             
             DataLog::log(
@@ -161,10 +103,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['export'])) {
                 null
             );
             
+            // Wyczyść bufor wyjściowy przed wysłaniem nagłówków
+            if (ob_get_level()) {
+                ob_end_clean();
+            }
+            
             // Wysłanie pliku do pobrania
             header('Content-Type: application/json; charset=utf-8');
             header('Content-Disposition: attachment; filename="' . $filename . '"');
             header('Content-Length: ' . strlen($jsonContent));
+            header('Cache-Control: no-cache, must-revalidate');
+            header('Expires: Sat, 26 Jul 1997 05:00:00 GMT');
+            
             echo $jsonContent;
             exit;
             
@@ -187,8 +137,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['export'])) {
 }
 
 // Pobierz statystyki do wyświetlenia
-$alcoholStats = AlcoholConsumption::getStatistics();
-$diseaseStats = Disease::count();
+try {
+    $alcoholStats = AlcoholConsumption::getStatistics();
+    $diseaseStats = Disease::count();
+} catch (Exception $e) {
+    $alcoholStats = ['total_records' => 0, 'min_year' => 'brak', 'max_year' => 'brak'];
+    $diseaseStats = 0;
+}
 ?>
 <!DOCTYPE html>
 <html lang="pl">
@@ -226,6 +181,17 @@ $diseaseStats = Disease::count();
         
         .radio-group input[type="radio"] {
             margin-right: 0.5rem;
+        }
+        
+        .code-block {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            padding: 1rem;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            overflow-x: auto;
+            white-space: pre-wrap;
         }
     </style>
 </head>
@@ -305,34 +271,6 @@ $diseaseStats = Disease::count();
                     Anuluj
                 </a>
             </form>
-        </div>
-        
-        <!-- Przykład formatu -->
-        <div class="card">
-            <h3>Przykład wygenerowanego pliku JSON</h3>
-            <div class="code-block">{
-    "spozycie_alkoholu": [
-        {
-            "Rok": 2023,
-            "Wyroby spirytusowe (100% alkoholu)": 3.5,
-            "Wino i miody pitne": 7.6,
-            "Wino i miody pitne w przeliczeniu na 100% alkohol": 0.91,
-            "Piwo": 38.6,
-            "Piwo w przeliczeniu na 100% alkoholu": 2.12
-        }
-    ],
-    "choroby": [
-        {
-            "Rok": 2023,
-            "Zespół pseudo-cushinga u alkoholików": "&lt;5",
-            "Zaburzenia psychiczne i zaburzenia zachowania spowodowane użyciem alkoholu": 2081,
-            "Zwyrodnienie układu nerwowego wywołane przez alkohol": 733,
-            "Polineuropatia alkoholowa": 1108,
-            "Kardiomiopatia alkoholowa": 72,
-            "Alkoholowa choroba wątroby": 10769
-        }
-    ]
-}</div>
         </div>
     </div>
 </body>

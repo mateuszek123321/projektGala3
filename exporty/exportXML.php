@@ -35,59 +35,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['export'])) {
             if ($exportType === 'alcohol') {
                 $alcoholData = AlcoholConsumption::getByYearRange($yearFrom, $yearTo);
                 $xmlContent = generateAlcoholXML($alcoholData);
-                $filename = 'alkohol_' . $yearFrom . '_' . $yearTo . '.xml';
+                $filename = 'alcohol_consumption_' . $yearFrom . '_' . $yearTo . '.xml';
                 $recordCount = count($alcoholData);
             }
             // Eksport danych o chorobach
             elseif ($exportType === 'diseases') {
                 $diseaseData = getDiseaseDataByYearRange($yearFrom, $yearTo);
                 $xmlContent = generateDiseaseXML($diseaseData);
-                $filename = 'choroby_' . $yearFrom . '_' . $yearTo . '.xml';
-                $recordCount = count($diseaseData);
+                $filename = 'diseases_' . $yearFrom . '_' . $yearTo . '.xml';
+                $recordCount = array_sum(array_map('count', $diseaseData));
             }
-            // Eksport obu typów w jednym pliku ZIP
+            // Eksport obu typów w jednym pliku XML
             else {
-                // Generuj oba pliki XML
                 $alcoholData = AlcoholConsumption::getByYearRange($yearFrom, $yearTo);
-                $alcoholXML = generateAlcoholXML($alcoholData);
-                
                 $diseaseData = getDiseaseDataByYearRange($yearFrom, $yearTo);
-                $diseaseXML = generateDiseaseXML($diseaseData);
-                
-                // Tworzenie archiwum ZIP
-                $zip = new ZipArchive();
-                $zipFileName = 'dane_kompletne_' . $yearFrom . '_' . $yearTo . '.zip';
-                $zipPath = sys_get_temp_dir() . '/' . $zipFileName;
-                
-                if ($zip->open($zipPath, ZipArchive::CREATE) === TRUE) {
-                    $zip->addFromString('alkohol_' . $yearFrom . '_' . $yearTo . '.xml', $alcoholXML);
-                    $zip->addFromString('choroby_' . $yearFrom . '_' . $yearTo . '.xml', $diseaseXML);
-                    $zip->close();
-                    
-                    $recordCount = count($alcoholData) + count($diseaseData);
-                    
-                    // Logowanie operacji
-                    DataLog::log(
-                        $_SESSION['user_id'],
-                        'export',
-                        'xml',
-                        $zipFileName,
-                        $recordCount,
-                        'success',
-                        null
-                    );
-                    
-                    // Wysłanie pliku ZIP
-                    header('Content-Type: application/zip');
-                    header('Content-Disposition: attachment; filename="' . $zipFileName . '"');
-                    header('Content-Length: ' . filesize($zipPath));
-                    readfile($zipPath);
-                    unlink($zipPath);
-                    exit;
-                } else {
-                    $message = 'Błąd podczas tworzenia archiwum ZIP.';
-                    $messageType = 'error';
-                }
+                $xmlContent = generateCombinedXML($alcoholData, $diseaseData);
+                $filename = 'complete_data_' . $yearFrom . '_' . $yearTo . '.xml';
+                $recordCount = count($alcoholData) + array_sum(array_map('count', $diseaseData));
             }
             
             if ($xmlContent && !$message) {
@@ -102,10 +66,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['export'])) {
                     null
                 );
                 
+                // Wyczyść bufor wyjściowy przed wysłaniem nagłówków
+                if (ob_get_level()) {
+                    ob_end_clean();
+                }
+                
                 // Wysłanie pliku do pobrania
                 header('Content-Type: text/xml; charset=utf-8');
                 header('Content-Disposition: attachment; filename="' . $filename . '"');
                 header('Content-Length: ' . strlen($xmlContent));
+                header('Cache-Control: no-cache, must-revalidate');
+                header('Expires: Sat, 26 Jul 1997 05:00:00 GMT');
+                
                 echo $xmlContent;
                 exit;
             }
@@ -131,16 +103,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['export'])) {
  * Generuje XML dla danych o alkoholu
  */
 function generateAlcoholXML($data) {
-    $xml = new SimpleXMLElement('<?xml version="1.0" encoding="utf-8"?><tabela></tabela>');
+    $xml = new SimpleXMLElement('<?xml version="1.0" encoding="utf-8"?><alcohol_consumption></alcohol_consumption>');
     
     foreach ($data as $record) {
-        $wiersz = $xml->addChild('wiersz');
-        $wiersz->addChild('Rok', $record->year);
-        $wiersz->addChild('Wyroby_spirytusowe_100_alkoholu', number_format($record->spirits_100_alcohol, 1, '.', ''));
-        $wiersz->addChild('Wino_i_miody_pitne', number_format($record->wine_mead, 1, '.', ''));
-        $wiersz->addChild('Wino_i_miody_pitne_w_przeliczeniu_na_100_alkohol', number_format($record->wine_mead_100_alcohol, 2, '.', ''));
-        $wiersz->addChild('Piwo', number_format($record->beer, 1, '.', ''));
-        $wiersz->addChild('Piwo_w_przeliczeniu_na_100_alkoholu', number_format($record->beer_100_alcohol, 2, '.', ''));
+        $row = $xml->addChild('record');
+        $row->addChild('year', $record->year);
+        $row->addChild('spirits_100_alcohol', number_format($record->spirits_100_alcohol, 2, '.', ''));
+        $row->addChild('wine_mead', number_format($record->wine_mead, 2, '.', ''));
+        $row->addChild('wine_mead_100_alcohol', number_format($record->wine_mead_100_alcohol, 2, '.', ''));
+        $row->addChild('beer', number_format($record->beer, 2, '.', ''));
+        $row->addChild('beer_100_alcohol', number_format($record->beer_100_alcohol, 2, '.', ''));
     }
     
     // Formatowanie XML z wcięciami
@@ -158,32 +130,12 @@ function generateAlcoholXML($data) {
 function getDiseaseDataByYearRange($yearFrom, $yearTo) {
     $pdo = getDBConnection();
     
-    // Mapowanie kodów chorób na nazwy XML
-    $codeToXmlName = [
-        'E24.4' => 'zespol_pseudo_cushinga_u_alkoholikow',
-        'F10' => 'zaburzenia_psychiczne_i_zachowania_spowodowane_uzyciem_alkoholu',
-        'G31.2' => 'zwyrodnienie_ukladu_nerwowego_wywolane_przez_alkohol',
-        'G62.1' => 'polineuropatia_alkoholowa',
-        'G72.1' => 'miopatia_alkoholowa',
-        'I42.6' => 'kardiomiopatia_alkoholowa',
-        'K29.2' => 'alkoholowe_zapalenie_zoladka',
-        'K70' => 'alkoholowa_choroba_watroby',
-        'K73' => 'przewlekle_zapalenie_watroby_niesklasyfikowane_gdzie_indziej',
-        'K74.0' => 'zwloknienie_watroby',
-        'K74.1' => 'stwardnienie_watroby',
-        'K74.2' => 'zwloknienie_watroby_ze_stwardnieniem_watroby',
-        'K74.6' => 'inna_i_nieokreslona_marskosc_watroby',
-        'K85.2' => 'alkoholowe_ostre_zapalenie_trzustki',
-        'K86.0' => 'przewlekle_zapalenie_trzustki_wywolane_alkoholem',
-        'Q86.0' => 'plodowy_zespol_alkoholowy_dysmorficzny',
-        'R78.0' => 'stwierdzenie_obecnosci_alkoholu_we_krwi'
-    ];
-    
     $stmt = $pdo->prepare("
-        SELECT year, disease_code, outpatient_count 
-        FROM diseases 
-        WHERE year BETWEEN ? AND ? 
-        ORDER BY year, disease_code
+        SELECT d.year, d.disease_code, dd.disease_name_pl, d.outpatient_count
+        FROM diseases d
+        JOIN disease_dictionary dd ON d.disease_code = dd.disease_code
+        WHERE d.year BETWEEN ? AND ? 
+        ORDER BY d.year, d.disease_code
     ");
     $stmt->execute([$yearFrom, $yearTo]);
     
@@ -194,10 +146,11 @@ function getDiseaseDataByYearRange($yearFrom, $yearTo) {
             $dataByYear[$year] = [];
         }
         
-        if (isset($codeToXmlName[$row['disease_code']])) {
-            $xmlName = $codeToXmlName[$row['disease_code']];
-            $dataByYear[$year][$xmlName] = $row['outpatient_count'];
-        }
+        $dataByYear[$year][] = [
+            'disease_code' => $row['disease_code'],
+            'disease_name' => $row['disease_name_pl'],
+            'outpatient_count' => (int)$row['outpatient_count']
+        ];
     }
     
     return $dataByYear;
@@ -207,42 +160,58 @@ function getDiseaseDataByYearRange($yearFrom, $yearTo) {
  * Generuje XML dla danych o chorobach
  */
 function generateDiseaseXML($dataByYear) {
-    $xml = new SimpleXMLElement('<?xml version="1.0" encoding="UTF-8"?><dane_alkoholowe></dane_alkoholowe>');
+    $xml = new SimpleXMLElement('<?xml version="1.0" encoding="UTF-8"?><diseases></diseases>');
     
     foreach ($dataByYear as $year => $diseases) {
-        $rokNode = $xml->addChild('rok');
-        $rokNode->addAttribute('year', $year);
+        $yearNode = $xml->addChild('year');
+        $yearNode->addAttribute('value', $year);
         
-        // Lista wszystkich możliwych chorób w odpowiedniej kolejności
-        $allDiseases = [
-            'zespol_pseudo_cushinga_u_alkoholikow',
-            'zaburzenia_psychiczne_i_zachowania_spowodowane_uzyciem_alkoholu',
-            'zwyrodnienie_ukladu_nerwowego_wywolane_przez_alkohol',
-            'polineuropatia_alkoholowa',
-            'miopatia_alkoholowa',
-            'kardiomiopatia_alkoholowa',
-            'alkoholowe_zapalenie_zoladka',
-            'alkoholowa_choroba_watroby',
-            'przewlekle_zapalenie_watroby_niesklasyfikowane_gdzie_indziej',
-            'zwloknienie_watroby',
-            'stwardnienie_watroby',
-            'zwloknienie_watroby_ze_stwardnieniem_watroby',
-            'inna_i_nieokreslona_marskosc_watroby',
-            'alkoholowe_ostre_zapalenie_trzustki',
-            'przewlekle_zapalenie_trzustki_wywolane_alkoholem',
-            'plodowy_zespol_alkoholowy_dysmorficzny',
-            'stwierdzenie_obecnosci_alkoholu_we_krwi'
-        ];
+        foreach ($diseases as $disease) {
+            $diseaseNode = $yearNode->addChild('disease');
+            $diseaseNode->addChild('code', htmlspecialchars($disease['disease_code']));
+            $diseaseNode->addChild('name', htmlspecialchars($disease['disease_name']));
+            $diseaseNode->addChild('outpatient_count', $disease['outpatient_count']);
+        }
+    }
+    
+    // Formatowanie XML z wcięciami
+    $dom = new DOMDocument('1.0', 'UTF-8');
+    $dom->preserveWhiteSpace = false;
+    $dom->formatOutput = true;
+    $dom->loadXML($xml->asXML());
+    
+    return $dom->saveXML();
+}
+
+/**
+ * Generuje XML dla kombinacji danych o alkoholu i chorobach
+ */
+function generateCombinedXML($alcoholData, $diseaseDataByYear) {
+    $xml = new SimpleXMLElement('<?xml version="1.0" encoding="UTF-8"?><data_export></data_export>');
+    
+    // Sekcja danych o alkoholu
+    $alcoholSection = $xml->addChild('alcohol_consumption');
+    foreach ($alcoholData as $record) {
+        $row = $alcoholSection->addChild('record');
+        $row->addChild('year', $record->year);
+        $row->addChild('spirits_100_alcohol', number_format($record->spirits_100_alcohol, 2, '.', ''));
+        $row->addChild('wine_mead', number_format($record->wine_mead, 2, '.', ''));
+        $row->addChild('wine_mead_100_alcohol', number_format($record->wine_mead_100_alcohol, 2, '.', ''));
+        $row->addChild('beer', number_format($record->beer, 2, '.', ''));
+        $row->addChild('beer_100_alcohol', number_format($record->beer_100_alcohol, 2, '.', ''));
+    }
+    
+    // Sekcja danych o chorobach
+    $diseaseSection = $xml->addChild('diseases');
+    foreach ($diseaseDataByYear as $year => $diseases) {
+        $yearNode = $diseaseSection->addChild('year');
+        $yearNode->addAttribute('value', $year);
         
-        foreach ($allDiseases as $diseaseName) {
-            $value = $diseases[$diseaseName] ?? 0;
-            
-            // Konwersja wartości <5 na format XML
-            if ($value > 0 && $value < 5) {
-                $rokNode->addChild($diseaseName, '<5');
-            } else {
-                $rokNode->addChild($diseaseName, $value);
-            }
+        foreach ($diseases as $disease) {
+            $diseaseNode = $yearNode->addChild('disease');
+            $diseaseNode->addChild('code', htmlspecialchars($disease['disease_code']));
+            $diseaseNode->addChild('name', htmlspecialchars($disease['disease_name']));
+            $diseaseNode->addChild('outpatient_count', $disease['outpatient_count']);
         }
     }
     
@@ -256,8 +225,13 @@ function generateDiseaseXML($dataByYear) {
 }
 
 // Pobierz statystyki
-$alcoholStats = AlcoholConsumption::getStatistics();
-$diseaseStats = Disease::count();
+try {
+    $alcoholStats = AlcoholConsumption::getStatistics();
+    $diseaseStats = Disease::count();
+} catch (Exception $e) {
+    $alcoholStats = ['total_records' => 0, 'min_year' => 'brak', 'max_year' => 'brak'];
+    $diseaseStats = 0;
+}
 ?>
 <!DOCTYPE html>
 <html lang="pl">
@@ -266,10 +240,52 @@ $diseaseStats = Disease::count();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Eksport XML - System Integracji Danych</title>
     <link rel="stylesheet" href="../css/style.css">
+    <style>
+        .export-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .stats-box {
+            background-color: #e9ecef;
+            padding: 1rem;
+            border-radius: 4px;
+            margin-bottom: 1rem;
+        }
+        
+        .radio-group {
+            display: flex;
+            gap: 1rem;
+            margin-top: 0.5rem;
+        }
+        
+        .radio-group label {
+            display: flex;
+            align-items: center;
+            font-weight: normal;
+        }
+        
+        .radio-group input[type="radio"] {
+            margin-right: 0.5rem;
+        }
+        
+        .code-block {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            padding: 1rem;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            overflow-x: auto;
+            white-space: pre-wrap;
+        }
+    </style>
 </head>
 <body>
     <div class="header">
-        <h1>Eksport danych do XML</h1>
+        <h2>Eksport danych do XML</h2>
         <a href="../index.php">← Powrót do panelu</a>
     </div>
     
@@ -307,20 +323,20 @@ $diseaseStats = Disease::count();
                     <div class="radio-group">
                         <label>
                             <input type="radio" name="export_type" value="alcohol" checked>
-                            Spożycie alkoholu
+                            Tylko spożycie alkoholu
                         </label>
                         <label>
                             <input type="radio" name="export_type" value="diseases">
-                            Choroby
+                            Tylko choroby
                         </label>
                         <label>
                             <input type="radio" name="export_type" value="both">
-                            Wszystkie dane (ZIP)
+                            Wszystkie dane
                         </label>
                     </div>
                 </div>
                 
-                <div class="grid">
+                <div class="export-options">
                     <div class="form-group">
                         <label for="year_from">Rok od:</label>
                         <input type="number" name="year_from" id="year_from" 
@@ -343,18 +359,6 @@ $diseaseStats = Disease::count();
                     Anuluj
                 </a>
             </form>
-        </div>
-        
-        <!-- Przykład formatu -->
-        <div class="card">
-            <h3>Format eksportowanych plików XML</h3>
-            <p>Pliki XML są generowane zgodnie z formatem źródłowym:</p>
-            <ul>
-                <li><strong>Alkohol:</strong> struktura &lt;tabela&gt;&lt;wiersz&gt;...&lt;/wiersz&gt;&lt;/tabela&gt;</li>
-                <li><strong>Choroby:</strong> struktura &lt;dane_alkoholowe&gt;&lt;rok year="..."&gt;...&lt;/rok&gt;&lt;/dane_alkoholowe&gt;</li>
-                <li>Wartości mniejsze niż 5 są eksportowane jako "&lt;5"</li>
-                <li>Kodowanie: UTF-8</li>
-            </ul>
         </div>
     </div>
 </body>

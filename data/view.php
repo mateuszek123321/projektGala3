@@ -141,9 +141,6 @@ if ($dataType === 'alcohol') {
                                 <th>Nazwa choroby</th>
                                 <th>Województwo</th>
                                 <th>Ambulatoryjne</th>
-                                <th>Szpitalne</th>
-                                <th>SOR</th>
-                                <th>Izba przyjęć</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -154,9 +151,6 @@ if ($dataType === 'alcohol') {
                                 <td><?php echo htmlspecialchars($record->disease_name); ?></td>
                                 <td><?php echo htmlspecialchars($record->province); ?></td>
                                 <td><?php echo number_format($record->outpatient_count ?? 0); ?></td>
-                                <td><?php echo number_format($record->hospital_count ?? 0); ?></td>
-                                <td><?php echo number_format($record->emergency_count ?? 0); ?></td>
-                                <td><?php echo number_format($record->admission_count ?? 0); ?></td>
                             </tr>
                             <?php endforeach; ?>
                         </tbody>

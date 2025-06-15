@@ -139,11 +139,6 @@ if (isset($_GET['logout'])) {
     </div>
     
     <div class="container">
-        <div class="welcome-section">
-            <h2>Witaj w systemie integracji danych!</h2>
-            <p>Ten system umożliwia integrację danych dotyczących spożycia alkoholu oraz występowania chorób w Polsce.</p>
-        </div>
-        
         <div class="features-grid">
             <div class="feature-card">
                 <h3>Import danych XML</h3>
@@ -180,12 +175,6 @@ if (isset($_GET['logout'])) {
                 <p>Zobacz statystyki i wykresy na podstawie zgromadzonych danych.</p>
                 <a href="data/stats.php" class="feature-btn">Statystyki</a>
             </div>
-        </div>
-        
-        <div class="status-info">
-            <h3>Status systemu</h3>
-            <p>Moduły dostępne: Import/Export XML, Import/Export JSON</p>
-            <p>Baza danych: MySQL</p>
         </div>
     </div>
 </body>

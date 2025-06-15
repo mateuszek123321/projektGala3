@@ -208,10 +208,7 @@ function importDiseaseDataXML($xml) {
                     'disease_name' => $diseaseInfo['name'],
                     'province' => 'Polska',
                     'year' => $year,
-                    'outpatient_count' => $outpatientCount,
-                    'hospital_count' => 0,
-                    'emergency_count' => 0,
-                    'admission_count' => 0
+                    'outpatient_count' => $outpatientCount
                 ]);
                 $disease->save();
                 $count++;
@@ -260,7 +257,7 @@ function importDiseaseDataXML($xml) {
 </head>
 <body>
     <div class="header">
-        <h1>Import danych XML</h1>
+        <h2>Import danych XML</h2>
         <a href="../index.php">← Powrót do panelu</a>
     </div>
     
@@ -301,35 +298,6 @@ function importDiseaseDataXML($xml) {
                 <button type="submit" name="submit" class="btn">Importuj dane</button>
                 <a href="../index.php" class="btn btn-secondary" style="text-decoration: none;">Anuluj</a>
             </form>
-        </div>
-        
-        <div class="card">
-            <h3>Przykładowy format plików XML:</h3>
-            
-            <h4>Dane o spożyciu alkoholu:</h4>
-            <div class="code-block">&lt;?xml version="1.0" encoding="utf-8"?&gt;
-&lt;tabela&gt;
-  &lt;wiersz&gt;
-    &lt;Rok&gt;2023&lt;/Rok&gt;
-    &lt;Wyroby_spirytusowe_100_alkoholu&gt;3.5&lt;/Wyroby_spirytusowe_100_alkoholu&gt;
-    &lt;Wino_i_miody_pitne&gt;7.6&lt;/Wino_i_miody_pitne&gt;
-    &lt;Wino_i_miody_pitne_w_przeliczeniu_na_100_alkohol&gt;0.91&lt;/Wino_i_miody_pitne_w_przeliczeniu_na_100_alkohol&gt;
-    &lt;Piwo&gt;38.6&lt;/Piwo&gt;
-    &lt;Piwo_w_przeliczeniu_na_100_alkoholu&gt;2.12&lt;/Piwo_w_przeliczeniu_na_100_alkoholu&gt;
-  &lt;/wiersz&gt;
-&lt;/tabela&gt;</div>
-            
-            <h4>Dane o chorobach:</h4>
-            <div class="code-block">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
-&lt;dane_alkoholowe&gt;
-  &lt;rok year="2023"&gt;
-    &lt;zespol_pseudo_cushinga_u_alkoholikow&gt;&amp;lt;5&lt;/zespol_pseudo_cushinga_u_alkoholikow&gt;
-    &lt;zaburzenia_psychiczne_i_zachowania_spowodowane_uzyciem_alkoholu&gt;2081&lt;/zaburzenia_psychiczne_i_zachowania_spowodowane_uzyciem_alkoholu&gt;
-    &lt;zwyrodnienie_ukladu_nerwowego_wywolane_przez_alkohol&gt;733&lt;/zwyrodnienie_ukladu_nerwowego_wywolane_przez_alkohol&gt;
-    &lt;polineuropatia_alkoholowa&gt;1108&lt;/polineuropatia_alkoholowa&gt;
-    &lt;alkoholowa_choroba_watroby&gt;10769&lt;/alkoholowa_choroba_watroby&gt;
-  &lt;/rok&gt;
-&lt;/dane_alkoholowe&gt;</div>
         </div>
     </div>
 </body>

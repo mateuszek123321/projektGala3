@@ -52,8 +52,8 @@ INSERT INTO disease_dictionary (disease_code, disease_name_pl, category) VALUES
 ('R78.0', 'Stwierdzenie obecności alkoholu we krwi', 'Objawy i nieprawidłowe wyniki badań')
 AS new_values
 ON DUPLICATE KEY UPDATE 
-    disease_name_pl = new_values.disease_name_pl,
-    category = new_values.category;
+    disease_name_pl = VALUES(disease_name_pl),
+    category = VALUES(category);
 
 -- Tabela danych o chorobach
 CREATE TABLE IF NOT EXISTS diseases (
@@ -63,9 +63,6 @@ CREATE TABLE IF NOT EXISTS diseases (
     province VARCHAR(100),
     year INT NOT NULL,
     outpatient_count INT,
-    hospital_count INT,
-    emergency_count INT,
-    admission_count INT,
     FOREIGN KEY (disease_code) REFERENCES disease_dictionary(disease_code),
     INDEX idx_year (year),
     INDEX idx_disease_code (disease_code)
@@ -95,10 +92,7 @@ SELECT
     d.province,
     d.year,
     d.outpatient_count,
-    d.hospital_count,
-    d.emergency_count,
-    d.admission_count,
-    d.outpatient_count + d.hospital_count + d.emergency_count + d.admission_count AS total_count
+    d.outpatient_count AS total_count
 FROM diseases d
 JOIN disease_dictionary dd ON d.disease_code = dd.disease_code
 ORDER BY d.year DESC, dd.category, dd.disease_code;
@@ -112,10 +106,7 @@ SELECT
     COUNT(DISTINCT d.year) as years_count,
     MIN(d.year) as first_year,
     MAX(d.year) as last_year,
-    SUM(d.outpatient_count) as total_outpatient,
-    SUM(d.hospital_count) as total_hospital,
-    SUM(d.emergency_count) as total_emergency,
-    SUM(d.admission_count) as total_admission
+    SUM(d.outpatient_count) as total_outpatient
 FROM disease_dictionary dd
 LEFT JOIN diseases d ON dd.disease_code = d.disease_code
 GROUP BY dd.disease_code, dd.disease_name_pl, dd.category;

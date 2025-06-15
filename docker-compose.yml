@@ -1,20 +1,7 @@
 version: '3.8'
 
 services:
-  # Serwer PHP z Apache
-  web:
-    build: .
-    container_name: integracja_web
-    ports:
-      - "8080:80"
-    volumes:
-      - ./:/var/www/html
-    depends_on:
-      - db
-    environment:
-      - DOCKER_ENV=true
-
-  # Baza danych MySQL
+  # Baza danych MySQL (przeniesiona na początek)
   db:
     image: mysql:8.0
     container_name: integracja_db
@@ -28,10 +15,32 @@ services:
     volumes:
       - db_data:/var/lib/mysql
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - app-network
+
+  # Serwer PHP z Apache
+  web:
+    build: .
+    container_name: integracja_web
+    ports:
+      - "8080:80"
+    volumes:
+      - ./:/var/www/html
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      - DOCKER_ENV=true
+      - DB_HOST=db
+      - DB_NAME=integracja_systemow
+      - DB_USER=user
+      - DB_PASSWORD=password
+    networks:
+      - app-network
 
   # phpMyAdmin
   phpmyadmin:
-    image: phpmyadmin/phpmyadmin
+    image: phpmyadmin/phpmyadmin:latest
     container_name: integracja_phpmyadmin
     ports:
       - "8081:80"
@@ -40,8 +49,17 @@ services:
       PMA_PORT: 3306
       PMA_USER: root
       PMA_PASSWORD: root
+      PMA_ARBITRARY: 1
+      UPLOAD_LIMIT: 300M
     depends_on:
-      - db
+      db:
+        condition: service_healthy
+    networks:
+      - app-network
 
 volumes:
   db_data:
+
+networks:
+  app-network:
+    driver: bridge
